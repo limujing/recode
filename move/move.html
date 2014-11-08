@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        #btn{
+            width: 100px;
+        }
+        #div1{
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            left: 0;
+            background: #000;
+            opacity: .3;
+        }
+
+        #aa{
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 100px;
+            top: 100px;
+            left: 100px;
+            text-align: center;
+            background-color: #ff0000;
+        }
+
+
+        #aside{
+            display: block;
+            width: 100px;
+            height: 300px;
+            position: absolute;
+            top: 300px;
+            left: -100px;
+            background-color: #000;
+        }
+
+        .line {
+            width: 1px;
+            position: absolute;
+            left: 300px;
+            height: 100px;
+            background-color: #ff0000;
+        }
+        .d{
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            margin: 10px;
+            opacity: .3;
+        }
+        #dd{
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script src="move.js"></script>
+    <script>
+        window.onload = function () {
+            var btn = document.getElementById('btn');
+            var div1 = document.getElementById('div1');
+            var aa = document.getElementById('aa');
+            var aside = document.getElementById('aside');
+            var dd=document.getElementById('dd');
+            console.log(getComputedStyle(aside,false)['left']);
+            aside.timer=null;
+            aside.onmouseover = function () {
+                move(aside, 0);
+            }
+            aside.onmouseout = function () {
+                move(aside, -100);
+            }
+            btn.onclick = function () {
+                move(div1, 300);
+            }
+            var ad=document.getElementsByClassName('d');
+            for(var i=0;i<ad.length;i++){
+                ad[i].alpha=30;
+                ad[i].timer=null;
+                ad[i].onmouseover=function(){
+                    move(this,100,'opacity');
+                }
+                ad[i].onmouseout=function(){
+                    move(this,30,'opacity');
+                }
+            }
+
+        }
+    </script>
+</head>
+<body>
+<div id="dd"></div>
+<input id="btn" type="button"/>
+
+<div class="line"></div>
+<div id="div1"></div>
+
+<div class="d"></div>
+<div class="d"></div>
+<div class="d"></div>
+
+<div id="aside">
+    <span id="aa">分享到</span>
+</div>
+<input id="btn" type="button"/>
+    <div id="div1"></div>
+
+    <div id="aside">
+        <span id="aa">分享到</span>
+    </div>
+</body>
+</html>

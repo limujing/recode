@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        window.onload=function(){
+            var oDiv=document.getElementsByTagName('div')[0];
+            var oSpan=document.getElementsByTagName('span')[0];
+            addEvent(oDiv,'click',function(){console.log(1);});
+            addEvent(oDiv,'click',function(){console.log(2);});
+            addEvent(oSpan,'show',function(){console.log(3);});
+            addEvent(oSpan,'show',function(){console.log(4);});
+
+            fireEvent(oSpan,'click');
+        }
+        function addEvent(obj,events,func){
+            obj.linsteners=obj.linsteners||{};
+            obj.linsteners[events]=obj.linsteners[events]||[];
+            obj.linsteners[events].push(func);
+            if(addEventListener) obj.addEventListener(events,func,false);
+            else obj.attachEvent('on'+events,func);
+        }
+        function fireEvent(obj,event){
+            for(var i=0;i<obj.linsteners[event].length;i++){
+                obj.linsteners[event][i]();
+            }
+        }
+    </script>
+</head>
+<body>
+<div>1111</div>
+<span>2222</span>
+</body>
+</html>

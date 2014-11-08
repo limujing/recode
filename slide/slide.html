@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #slide {
+            position: relative;
+            overflow: hidden;
+            font-size: 0;
+            border: 1px solid #000;
+        }
+
+        .slide-box {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .slide-box a {
+            float: left;
+            margin: 0;
+            padding: 0;
+        }
+        .slide-box img{
+            border: none;
+        }
+        .next {
+            position: absolute;
+            left: 10px;
+            top: 115px;
+            width: 50px;
+            height: 50px;
+            background-color: #ffffff;
+            z-index: 999;
+        }
+
+        .prev {
+            position: absolute;
+            right: 10px;
+            top: 115px;
+            width: 50px;
+            height: 50px;
+            background-color: #ffffff;
+            z-index: 999;
+        }
+
+        .slide-nav {
+            position: absolute;
+            left: 100px;
+            bottom: 10px;
+        }
+
+        .slide-nav span {
+            display: inline-block;
+            text-align: center;
+            line-height: 22px;
+            width: 22px;
+            height: 22px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            background-color: #ffffff;
+        }
+
+        .slide-nav .active {
+            background-color: #ff6600;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div id="slide">
+    <div class="slide-box">
+        <a href="#"><img src="images/1.jpg" alt=""/></a><a href="#"><img src="images/2.jpg" alt=""/></a><a href="#"><img
+            src="images/3.jpg" alt=""/></a><a href="#"><img src="images/4.jpg" alt=""/></a><a href="#"><img
+            src="images/5.jpg" alt=""/></a>
+    </div>
+</div>
+<script>
+    window.onload = function() {
+        slide();
+    }
+
+    function slide() {
+        var oSlide = document.getElementById('slide');
+        var oSlideBox = oSlide.getElementsByTagName('div')[0];
+        var aLink = oSlideBox.getElementsByTagName('a');
+        var linkW = aLink[0].offsetWidth;
+        var linkH = aLink[0].offsetHeight;
+        var firstLInkHtml = aLink[0].innerHTML;
+        var lastLinkHtml = aLink[aLink.length - 1].innerHTML;
+        var newFirstLink = document.createElement('a');
+        var newLastLink = document.createElement('a');
+        var next = document.createElement('a');
+        var prev = document.createElement('a');
+        var slideNav = document.createElement('div');
+        var timer = null;
+        slideNav.className = "slide-nav";
+        oSlide.appendChild(slideNav);
+        var index = 0;
+        newFirstLink.innerHTML = lastLinkHtml;
+        newLastLink.innerHTML = firstLInkHtml;
+        oSlide.style.width = linkW + "px";
+        oSlide.style.height = linkH + "px";
+        oSlideBox.style.left = -linkW + "px";
+        next.className = "next";
+        next.setAttribute("href", "javascript:;");
+        prev.className = "prev";
+        prev.setAttribute("href", "javascript:;");
+        oSlide.insertBefore(prev, oSlideBox);
+        oSlide.appendChild(next);
+        var oSlideBoxL = oSlideBox.offsetLeft;
+        for (var i = 0; i < aLink.length; i++) {
+            var navList = document.createElement('span');
+            navList.innerHTML = i + 1;
+            if (i == 0) navList.className = "active";
+            slideNav.appendChild(navList);
+            navList.index = -i - 1;
+            navList.onclick = function() {
+                var self = this;
+                move(oSlideBox, {
+                    "left": this.index * linkW
+                }, function() {
+                    oSlideBoxL = self.index * linkW;
+                });
+                var span = [];
+                var sib = this.parentNode.childNodes;
+                for (var j = 0; j < sib.length; j++) {
+                    sib[j].className = "";
+                }
+                this.className = "active";
+                index = Math.abs(this.index) - 1;
+            }
+        }
+        oSlideBox.appendChild(newLastLink);
+        oSlideBox.insertBefore(newFirstLink, aLink[0]);
+        oSlideBox.style.width = linkW * aLink.length + "px";
+        var aSpan = slideNav.getElementsByTagName('span');
+        oSlide.onmouseover = function() {
+            clearInterval(timer);
+        }
+        oSlide.onmouseout = function() {
+            clearInterval(timer);
+            timer = setInterval(prevMove, 3000);
+        }
+        prev.onclick = function() {
+            prevMove();
+        }
+        next.onclick = function() {
+            nextMove();
+        }
+        timer = setInterval(prevMove, 3000);
+
+        function nextMove() {
+            for (var j = 0; j < aSpan.length; j++) {
+                aSpan[j].className = "";
+            }
+            if (index == 0) index = 5;
+            aSpan[index - 1].className = "active";
+            move(oSlideBox, {
+                "left": oSlideBoxL + linkW
+            }, function() {
+                oSlideBoxL += linkW;
+                index--;
+                if (oSlideBoxL == 0) {
+                    oSlideBox.style.left = -(linkW * (aLink.length - 2)) + "px";
+                    oSlideBoxL = -(linkW * (aLink.length - 2));
+                }
+            });
+        }
+
+        function prevMove() {
+            for (var j = 0; j < aSpan.length; j++) {
+                aSpan[j].className = "";
+            }
+            if (index == 4) index = -1;
+            aSpan[index + 1].className = "active";
+            move(oSlideBox, {
+                "left": oSlideBoxL - linkW
+            }, function() {
+                oSlideBoxL -= linkW;
+                index++;
+                if (oSlideBoxL <= -(linkW * (aLink.length - 1))) {
+                    oSlideBox.style.left = -linkW + "px";
+                    oSlideBoxL = -linkW;
+                }
+            });
+        }
+    }
+
+    function move(obj, json, func) {
+        clearInterval(obj.timer);
+        obj.timer = setInterval(function() {
+            var bStop = true;
+            for (var attr in json) {
+                var iCur = attr == "opacity" ? parseInt(parseFloat(getStyle(obj, attr)) * 100) : parseInt(getStyle(obj, attr));
+                var iSpeed = (json[attr] - iCur) / 8;
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if (iCur != json[attr]) bStop = false;
+                if (attr == "opacity") {
+                    obj.style.filter = "alpha(opacity=" + iCur + iSpeed + ")";
+                    obj.style.opacity = (iCur + iSpeed) / 100;
+                } else {
+                    obj.style[attr] = iCur + iSpeed + "px";
+                }
+            }
+            if (bStop) {
+                clearInterval(obj.timer);
+                if (func) func();
+            }
+        }, 10);
+    }
+
+    function getStyle(obj, attr) {
+        if (obj.currentStyle) return obj.currentStyle[attr];
+        else return getComputedStyle(obj, false)[attr];
+    }
+</script>
+</body>
+</html>

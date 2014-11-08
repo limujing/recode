@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../common.js"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+       .tab-menus li{
+           float: left;
+           text-align: center;
+           width: 70px;
+           margin: 0px 5px;
+           border: 1px solid #000;
+       }
+       .tab-menus a{
+           display: block;
+           text-decoration: none;
+       }
+        .tab-menus{
+            height: 20px;
+            line-height: 20px;
+        }
+        .tab-details{
+            margin: 10px 5px;
+            width: 235px;
+            text-align: center;
+            height: 200px;
+            line-height: 200px;
+
+        }
+        .content{
+            display: none;
+            border: 1px solid #000;
+        }
+        .active{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="tab">
+        <div class="tab-menus">
+            <ul>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+            </ul>
+        </div>
+        <div class="tab-details">
+            <div class="content active">1</div>
+            <div class="content">2</div>
+            <div class="content">3</div>
+        </div>
+    </div>
+    <input id="txt1" type="text"/>
+    <input id="txt2" type="text"/>
+    <input type="button"/>
+<script>
+    window.onload=function(){
+        var b1=document.getElementsByTagName('input')[2];
+        var txt1=document.getElementById('txt1');
+        var txt2=document.getElementById('txt2');
+        var t1=new Tab();
+        t1.init();
+        b1.onclick=function(){
+            t1.addItem({
+                title:txt1.value,
+                content:txt2.value
+            });
+        }
+    }
+    function Tab(){
+        this.aim=null;
+        this.aMenuList=null;
+        this.aContentList=null;
+        this.oMenu=null;
+        this.oDetails=null;
+        this.settings={
+            event:"click"
+        }
+    }
+    Tab.prototype.init=function(ele,opt){
+        extend(this.settings,opt);
+        this.aim=document.getElementById('tab');
+        this.aMenuList=this.aim.getElementsByTagName('li');
+        this.aContentList=this.aim.getElementsByClassName('content');
+        for(var i=0;i<this.aMenuList.length;i++){
+            var self=this;
+            this.aMenuList[i].index=i;
+            this.aMenuList[i].onclick=function(){
+                self.tabClickFn(this);
+            };
+        }
+    }
+    Tab.prototype.tabClickFn=function(obj){
+
+        for(var i=0;i<this.aContentList.length;i++){
+            removeClass(this.aContentList[i],'active');
+        }
+        addClass(this.aContentList[obj.index],'active');
+    }
+    Tab.prototype.addItem=function(opt){
+        this.oMenu=this.aim.getElementsByTagName('ul')[0];
+        this.oDetails=this.aim.getElementsByClassName('tab-details')[0];
+        var oLi=document.createElement('li');
+        oLi.innerHTML='<a href="#">'+opt.title+'</a>';
+        this.oMenu.appendChild(oLi);
+        for(var i=0;i<this.aMenuList.length;i++){
+            var self=this;
+            this.aMenuList[i].index=i;
+            this.aMenuList[i].onclick=function(){
+                self.tabClickFn(this);
+            };
+        }
+        var oDiv=document.createElement('div');
+        oDiv.className="content";
+        oDiv.innerHTML=opt.content;
+        this.oDetails.appendChild(oDiv);
+    }
+    function addEvent(obj,events,func){
+        obj.linsteners=obj.linsteners||{};
+        obj.linsteners[events]=obj.linsteners[events]||[];
+        obj.linsteners[events].push(func);
+        if(addEventListener) obj.addEventListener(events,func,false);
+        else obj.attachEvent('on'+events,func);
+    }
+    function fireEvent(obj,event){
+        for(var i=0;i<obj.linsteners[event].length;i++){
+            obj.linsteners[event][i]();
+        }
+    }
+    function extend(o,p){
+        for(var attr in p){
+            o[attr]=p[attr];
+        }
+    }
+</script>
+</body>
+</html>

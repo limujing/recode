@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            height: 2000px;
+        }
+        #div1{
+            position: absolute;
+            right: 0;
+            width: 50px;
+            height: 100px;
+            top: 50%;
+            background-color: #ff0000;
+        }
+    </style>
+    <script src="move/move.js"></script>
+    <script>
+        window.onscroll=function(){
+            var oDiv=document.getElementById('div1');
+            var scrollTop=document.body.scrollTop||document.documentElement.scrollTop;
+            var t=scrollTop+(document.documentElement.clientHeight-oDiv.offsetHeight)/2;
+            oDiv.timer=null;
+           move(oDiv,t)
+        }
+    </script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>

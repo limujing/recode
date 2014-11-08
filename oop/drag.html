@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #d {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            background-color: #ff0000;
+        }
+        #d2{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            background-color: #cccccc;
+            left: 100px;
+        }
+        #d3{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            background-color: #ff6600;
+            left: 200px;
+        }
+        #d4{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            background-color: #0F1016;
+            left: 300px;
+        }
+    </style>
+</head>
+<body>
+<div id="d"></div>
+<div id="d2"></div>
+<div id="d3"></div>
+<div id="d4"></div>
+<script>
+    window.onload = function () {
+        var d = new Drag('d');
+        d.init({
+            toUp:function(){
+                console.log(2);
+            }
+        });
+        var d2=new Drag2('d2',"blue");
+        d2.init({
+            toDown:function(){
+                console.log(1);
+            }
+        });
+        d2.showColor();
+    }
+    function Drag(id) {
+        this.oD = document.getElementById(id);
+        this.disX = 0;
+        this.disY = 0;
+        this.settings={
+            toDown:function(){},
+            toUp:function(){}
+        }
+    }
+    Drag.prototype.init = function (opt) {
+        var self = this;
+        extend(this.settings,opt);
+        this.oD.onmousedown = function (ev) {
+            self.settings.toDown();
+            var ev = ev || window.event;
+            self.downFn(ev);
+            return false;
+        }
+    }
+    Drag.prototype.downFn = function (ev) {
+        var self = this;
+        this.disX = ev.clientX - this.oD.offsetLeft;
+        this.disY = ev.clientY - this.oD.offsetTop;
+        document.onmousemove = function (ev) {
+            var ev = ev || window.event;
+            self.moveFn(ev);
+        }
+        document.onmouseup = function(){
+            self.upFn();
+        };
+    }
+    Drag.prototype.moveFn = function (ev) {
+        this.oD.style.left = ev.clientX - this.disX + "px";
+        this.oD.style.top = ev.clientY - this.disY + "px";
+    }
+    Drag.prototype.upFn = function () {
+        this.settings.toUp();
+        document.onmousemove = null;
+        document.onmouseup = null;
+    }
+    function Drag2(id,color){
+        Drag.call(this,id);
+        this.color=color;
+        extend(Drag2.prototype,Drag.prototype);
+    }
+    Drag2.prototype.showColor=function(){
+        this.oD.style.backgroundColor=this.color;
+    }
+    function extend(o,p){
+        for(var attr in p){
+            o[attr]=p[attr];
+        }
+    }
+</script>
+</body>
+</html>

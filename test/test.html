@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        #d{
+            width: 100px;
+            height: 100px;
+            background: #000;
+            position: absolute;
+        }
+    </style>
+    <script src="move.js"></script>
+    <script>
+        window.onload=function(){
+            var d=document.getElementById('d');
+            d.onmouseover=function(){
+                move(this,'width',200);
+            }
+            d.onmouseout=function(){
+                move(this,'width',100)
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="d"></div>
+</body>
+</html>
